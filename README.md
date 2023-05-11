@@ -1,0 +1,1 @@
+# TBME_lumped_element_equivalent_circuit_schematic
