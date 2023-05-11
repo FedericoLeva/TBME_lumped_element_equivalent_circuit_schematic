@@ -1,0 +1,34 @@
+#parametric functions to compute the area_i in cm^2 of the i-th compartment
+#and the internal and external reistance based on corresponding radii
+
+#THIS EXAMPLE CONSIDERS 8 NEURON COMPARTMENTS: 4 JUNCTIONAL & 4 NON-JUNCTIONAL
+
+#insert the basal radius and heigh (i.e. semi-axis) in cm of the semi-ellipsoidal neuron:
+.param Rneu		10e-4
+.param Hneu		5e-4
+#insert the radius and heigh of the electrode in m:
+.param Rele		5e-6
+.param Hele		2e-7
+
+#functions to autonomously compute the area and resistance values for the schematic:
+.param pi		3.14159
+.param ec 		{sqrt(1-Hneu**2/Rneu**2)}
+.param pitch	{Rneu/8}
+.param Ajm 		{Ai(1)+Ai(2)+Ai(3)+Ai(4)}
+.param Anml		{Ai(5)+Ai(6)+Ai(7)+Ai(8)}
+.param Anmu 	{pi*Rneu**2 + 0.5*pi*Hneu**2/ec*log((1+ec)/(1-ec))}
+.param Anm		{Anml+Anmu}
+.param Am 		{Ajm+Anm}
+.param uNa_bar 	{(Am-uNa*Ajm)/Anm}
+.param uK_bar	{(Am-uK*Ajm)/Anm}
+.funct Rext(n)=	{n*pitch}
+.funct Rint(n)=	{(n-1)*pitch}
+.funct req(n)=	{sqrt(((Rext(n))**2+(Rint(n))**2)/2)}
+.funct ri(n,T)=	{log(req(n)/Rint(n))/(2*pi*sigma*T)}
+.funct re(n,T)=	{log(Rext(n)/req(n))/(2*pi*sigma*T)}
+.funct Ai(n)=	{pi*(2*n-1)*pitch**2}
+
+#additional support parametric functions
+.param Tn 		{Hele+Tj}
+.param Alat		{2*pi*Rele*Hele*1e-4}
+
